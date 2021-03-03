@@ -39,8 +39,6 @@ export class AppService {
 
     public async getData(value?: string) {
         if (value && value.trim().length !== 0) {
-            const email = value.split('@');
-            console.log(email);
             const {body} = await this.elasticService.search({
                 index: 'users',
                 body: {
