@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        #find {
+            height: 30px;
+            width: 30%;
+            border-radius: 8px;
+            outline: none;
+            border: 1px solid gray;
+            font-size: 1.2em;
+            padding-left: 10px;
+            font-family: "Arial LatArm";
+        }
+
+        #find:hover {
+            box-shadow: gray -3px 5px 18px 3px;
+        }
+
+        #list {
+            max-height: 300px;
+            min-height: 300px;
+            overflow-y: auto;
+            width: 30%;
+        }
+
+        #list span {
+            font-family: "Arial LatArm";
+            font-size: 1.2em;
+            padding-left: 10px;
+        }
+
+        #table {
+            border-collapse: collapse;
+
+        }
+
+        #table thead th {
+            border: 1px solid black;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+<input type="text" id="find" autocomplete="on"/>
+<div id="list"></div>
+<table id="table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Firstname</th>
+        <th>Lastname</th>
+        <th>Email</th>
+        <th>Birthday</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+    document.getElementById('find').addEventListener('keyup', function (e) {
+        axios.get('/search?value=' + e.target.value).then(response => {
+            document.getElementById('list').innerHTML = '';
+            if (response.data.rows) {
+                console.log(response.data.rows)
+                e.target.value.trim() && response.data.rows.map(el => {
+                    console.log(el)
+
+                    document.getElementById('table tbody').insertAdjacentHTML("afterbegin", `
+                    <tr>
+                        <td>${el[0]}</td>
+                        <td>${el[1]}</td>
+                        <td>${el[2]}</td>
+                        <td>${el[3]}</td>
+                    </tr>
+                    `)
+                    let newElem = document.createElement('span');
+                    let text = el.toString().substr(0, e.target.value.length);
+                    newElem.innerHTML = `<strong>${text}</strong>${el.toString().substr(e.target.value.length)}<br>`;
+                    document.getElementById('list').appendChild(newElem);
+                })
+            } else {
+                if (e.target.value.trim().length > 0)
+                    document.getElementById('list').innerHTML = `<span>Did you mean ${response.data.toString()}</span>`
+            }
+
+        })
+    })
+</script>
+</html>
